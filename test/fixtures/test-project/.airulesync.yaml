@@ -1,0 +1,18 @@
+# Test configuration file for airulesync
+
+source_dirs:
+  - path: "."
+    files:
+      - ".clinerules"
+      - pattern: ".cursor/rules/**/*.mdc"
+        adjust_paths: true
+      - pattern: ".roomodes"
+        adjust_paths: false
+    ignore_files:
+      - ".cursor/rules/private/*.mdc"
+
+target_dirs:
+  - path: "./sub-project-a"
+  - path: "./sub-project-b"
+    ignore_files:
+      - ".roomodes"

@@ -1,0 +1,17 @@
+# Test clinerules file
+
+This is a test file with paths to adjust.
+
+import "./relative/path/file.js"
+import "../another/path/file.js"
+require("./module.js")
+
+"path": "./config.json"
+file="./data.txt"
+
+[Link](./doc.md)
+href="./page.html"
+src="./image.png"
+
+"./file.txt"
+"../parent.txt"
