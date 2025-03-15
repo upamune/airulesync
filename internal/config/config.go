@@ -10,30 +10,30 @@ import (
 
 // Config represents the main configuration structure
 type Config struct {
-	SourceDirs []SourceDir `yaml:"source_dirs"`
-	TargetDirs []TargetDir `yaml:"target_dirs"`
+	SourceDirs []SourceDir `yaml:"source_dirs" jsonschema:"description=List of source directories containing rule files to be synchronized"`
+	TargetDirs []TargetDir `yaml:"target_dirs" jsonschema:"description=List of target directories where rule files will be synchronized to"`
 }
 
 // SourceDir represents a source directory configuration
 type SourceDir struct {
-	Path        string     `yaml:"path"`
-	Overwrite   *bool      `yaml:"overwrite,omitempty"`
-	Files       []FileSpec `yaml:"files"`
-	IgnoreFiles []string   `yaml:"ignore_files,omitempty"`
+	Path        string     `yaml:"path" jsonschema:"description=Path to the source directory"`
+	Overwrite   *bool      `yaml:"overwrite,omitempty" jsonschema:"description=Whether to overwrite existing files in target directories (default: true)"`
+	Files       []FileSpec `yaml:"files" jsonschema:"description=List of files to synchronize from this source directory"`
+	IgnoreFiles []string   `yaml:"ignore_files,omitempty" jsonschema:"description=List of file patterns to ignore when synchronizing"`
 }
 
 // TargetDir represents a target directory configuration
 type TargetDir struct {
-	Path        string   `yaml:"path"`
-	External    bool     `yaml:"external,omitempty"`
-	IgnoreFiles []string `yaml:"ignore_files,omitempty"`
+	Path        string   `yaml:"path" jsonschema:"description=Path to the target directory"`
+	External    bool     `yaml:"external,omitempty" jsonschema:"description=Whether this directory is external to the project (default: false)"`
+	IgnoreFiles []string `yaml:"ignore_files,omitempty" jsonschema:"description=List of file patterns to ignore when synchronizing to this target directory"`
 }
 
 // FileSpec represents a file specification
 type FileSpec struct {
-	Pattern     string `yaml:"pattern,omitempty"`
-	AdjustPaths *bool  `yaml:"adjust_paths,omitempty"`
-	Overwrite   *bool  `yaml:"overwrite,omitempty"`
+	Pattern     string `yaml:"pattern,omitempty" jsonschema:"description=File pattern to match (glob pattern)"`
+	AdjustPaths *bool  `yaml:"adjust_paths,omitempty" jsonschema:"description=Whether to adjust relative paths in the file (default: true)"`
+	Overwrite   *bool  `yaml:"overwrite,omitempty" jsonschema:"description=Whether to overwrite existing files (overrides directory setting)"`
 }
 
 // UnmarshalYAML implements the yaml.Unmarshaler interface for FileSpec
@@ -156,7 +156,11 @@ func SaveConfig(config *Config, configPath string) error {
 		return fmt.Errorf("failed to marshal config: %w", err)
 	}
 
-	if err := os.WriteFile(configPath, data, 0644); err != nil {
+	// Add header comments
+	headerComments := []byte("# yaml-language-server: $schema=https://raw.githubusercontent.com/upamune/airulesync/refs/heads/main/schema.json\n# vim: set ts=2 sw=2 tw=0 fo=cnqoj\n")
+	dataWithComments := append(headerComments, data...)
+
+	if err := os.WriteFile(configPath, dataWithComments, 0644); err != nil {
 		return fmt.Errorf("failed to write config file: %w", err)
 	}
 

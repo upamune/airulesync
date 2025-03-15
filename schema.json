@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/upamune/airulesync/internal/config/config",
+  "$ref": "#/$defs/Config",
+  "$defs": {
+    "Config": {
+      "properties": {
+        "source_dirs": {
+          "items": {
+            "$ref": "#/$defs/SourceDir"
+          },
+          "type": "array",
+          "description": "List of source directories containing rule files to be synchronized"
+        },
+        "target_dirs": {
+          "items": {
+            "$ref": "#/$defs/TargetDir"
+          },
+          "type": "array",
+          "description": "List of target directories where rule files will be synchronized to"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "FileSpec": {
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "File pattern to match (glob pattern)"
+        },
+        "adjust_paths": {
+          "type": "boolean",
+          "description": "Whether to adjust relative paths in the file (default: true)"
+        },
+        "overwrite": {
+          "type": "boolean",
+          "description": "Whether to overwrite existing files (overrides directory setting)"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "SourceDir": {
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Path to the source directory"
+        },
+        "overwrite": {
+          "type": "boolean",
+          "description": "Whether to overwrite existing files in target directories (default: true)"
+        },
+        "files": {
+          "items": {
+            "$ref": "#/$defs/FileSpec"
+          },
+          "type": "array",
+          "description": "List of files to synchronize from this source directory"
+        },
+        "ignore_files": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of file patterns to ignore when synchronizing"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "TargetDir": {
+      "properties": {
+        "path": {
+          "type": "string",
+          "description": "Path to the target directory"
+        },
+        "external": {
+          "type": "boolean",
+          "description": "Whether this directory is external to the project (default: false)"
+        },
+        "ignore_files": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "description": "List of file patterns to ignore when synchronizing to this target directory"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    }
+  },
+  "title": "AIRuleSync Configuration Schema",
+  "description": "Schema for the AIRuleSync configuration file (.airulesync.yaml)"
+}

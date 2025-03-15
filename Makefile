@@ -1,4 +1,4 @@
-.PHONY: build test clean install run lint
+.PHONY: build test clean install run lint schema
 
 # Build variables
 BINARY_NAME=airulesync
@@ -52,6 +52,11 @@ coverage:
 	@go tool cover -html=coverage.out -o coverage.html
 	@echo "Coverage report generated at coverage.html"
 
+# Generate JSON Schema
+schema:
+	@echo "Generating JSON schema..."
+	@go run ./cmd/jsonschema/main.go > schema.json
+
 # Help target
 help:
 	@echo "Available targets:"
@@ -64,4 +69,5 @@ help:
 	@echo "  run        - Run the application (use ARGS=\"arg1 arg2\" to pass arguments)"
 	@echo "  lint       - Run linters"
 	@echo "  coverage   - Generate test coverage report"
+	@echo "  schema     - Generate JSON schema for configuration files"
 	@echo "  help       - Show this help message"

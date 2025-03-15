@@ -68,11 +68,14 @@ airulesync sync
 
 ## ⚙️ Configuration
 
-AIRuleSync uses a YAML configuration file to define source and target directories, files to sync, and sync options.
+airulesync uses a YAML configuration file to define source and target directories, files to sync, and sync options. The configuration file includes helpful header comments for editor integration.
 
 ### Example Configuration
 
 ```yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/upamune/airulesync/refs/heads/main/schema.json
+# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+
 # Source directories containing rule files to sync
 source_dirs:
   - path: "./src/main-project"
@@ -115,7 +118,7 @@ target_dirs:
 
 ## 📝 Path Adjustment
 
-AIRuleSync handles path adjustments based on the relationship between source and target directories:
+airulesync handles path adjustments based on the relationship between source and target directories:
 
 - **Parent to Child**: Adjusts paths for use in subdirectories
 - **Child to Parent**: Adjusts paths for use in parent directories 
@@ -124,7 +127,7 @@ AIRuleSync handles path adjustments based on the relationship between source and
 
 ### Path Detection Patterns
 
-AIRuleSync detects and adjusts various path formats:
+airulesync detects and adjusts various path formats:
 
 - Import/require statements in various languages
 - JSON/YAML path references
@@ -132,6 +135,12 @@ AIRuleSync detects and adjusts various path formats:
 - Markdown links and references
 - HTML href and src attributes
 - General file paths with common extensions
+
+### Development Commands
+
+For developers contributing to the project:
+
+- `make schema` - Generates the JSON Schema for configuration validation
 
 ## 🤝 Contributing
 

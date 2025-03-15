@@ -1,0 +1,19 @@
+name: Schema Validation
+on: [push, pull_request]
+jobs:
+  validate-schema:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+      - name: Generate schema
+        run: make schema
+      - name: Check for schema changes
+        run: |
+          if ! git diff --quiet schema.json; then
+            echo "Error: schema.json is out of date. Please run 'make schema' and commit the changes."
+            git diff schema.json
+            exit 1
+          fi
