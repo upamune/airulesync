@@ -25,7 +25,7 @@ go install github.com/upamune/airulesync@latest
 ### Using Homebrew
 
 ```bash
-brew upamune/tap/airulesync
+brew install upamune/tap/airulesync
 ```
 
 ### Binary Releases
