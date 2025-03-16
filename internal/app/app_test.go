@@ -125,6 +125,8 @@ func TestRunInit(t *testing.T) {
 	files := map[string]string{
 		filepath.Join(projectDir, ".clinerules"):   "# Test clinerules file",
 		filepath.Join(projectDir, ".roomodes"):     "# Test roomodes file",
+		filepath.Join(projectDir, ".clineignore"):  "# Test clineignore file",
+		filepath.Join(projectDir, ".cursorignore"): "# Test cursorignore file",
 		filepath.Join(cursorRulesDir, "rule1.mdc"): "# Test rule1 file",
 		filepath.Join(subDirA, "main.go"):          "package main",
 		filepath.Join(subDirB, "app.js"):           "console.log('Hello');",
@@ -173,6 +175,8 @@ func TestRunInit(t *testing.T) {
 		"path: .", // Now using relative path
 		".clinerules",
 		".roomodes",
+		".clineignore",
+		".cursorignore",
 		".cursor/rules/*.mdc",
 		"target_dirs: []", // Now empty target_dirs
 	}

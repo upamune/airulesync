@@ -181,6 +181,7 @@ func (s *Scanner) ScanDirectory(dir string) ([]string, error) {
 		".roomodes",
 		".rooignore",
 		".cursorignore",
+		".clineignore",
 	}
 
 	for _, pattern := range patterns {
@@ -267,7 +268,7 @@ func (s *Scanner) FindPotentialTargetDirs(baseDir string) ([]string, error) {
 		if hasSourceFiles {
 			// Check if it already has rule files
 			hasRuleFiles := false
-			rulePatterns := []string{".clinerules", ".cursor/rules", ".roomodes", ".rooignore", ".cursorignore"}
+			rulePatterns := []string{".clinerules", ".cursor/rules", ".roomodes", ".rooignore", ".cursorignore", ".clineignore"}
 			for _, pattern := range rulePatterns {
 				if _, err := os.Stat(filepath.Join(path, pattern)); err == nil {
 					hasRuleFiles = true
