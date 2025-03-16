@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/upamune/airulesync/internal/config"
 	"github.com/upamune/airulesync/internal/scanner"
@@ -120,34 +121,57 @@ func (a *App) RunInit(dir string) error {
 func (a *App) generateConfig(baseDir string, ruleFiles, targetDirs []string) *config.Config {
 	// Group rule files by directory
 	filesByDir := make(map[string][]string)
+	hasCursorRules := false
+
 	for _, file := range ruleFiles {
 		dir := filepath.Dir(file)
 		if dir == "." {
 			dir = ""
 		}
+
+		// Check if this is a file in the .cursor/rules directory
+		if strings.HasPrefix(dir, ".cursor/rules") {
+			hasCursorRules = true
+			continue // Skip individual .cursor/rules files
+		}
+
 		filesByDir[dir] = append(filesByDir[dir], filepath.Base(file))
 	}
 
 	// Create source directories
 	var sourceDirs []config.SourceDir
+
+	// Create a source directory for the base directory
+	var baseFileSpecs []config.FileSpec
+
+	// If .cursor/rules directory exists, add a pattern for all .mdc files
+	if hasCursorRules {
+		baseFileSpecs = append(baseFileSpecs, config.FileSpec{
+			Pattern: ".cursor/rules/*.mdc",
+		})
+	}
+
+	// Add other files from the base directory
 	for dir, files := range filesByDir {
-		var fileSpecs []config.FileSpec
 		for _, file := range files {
 			// Check if the file is in a subdirectory
 			if dir != "" {
-				fileSpecs = append(fileSpecs, config.FileSpec{
+				baseFileSpecs = append(baseFileSpecs, config.FileSpec{
 					Pattern: filepath.Join(dir, file),
 				})
 			} else {
-				fileSpecs = append(fileSpecs, config.FileSpec{
+				baseFileSpecs = append(baseFileSpecs, config.FileSpec{
 					Pattern: file,
 				})
 			}
 		}
+	}
 
+	// Add the source directory if it has files
+	if len(baseFileSpecs) > 0 {
 		sourceDirs = append(sourceDirs, config.SourceDir{
 			Path:  ".", // Use relative path instead of absolute path
-			Files: fileSpecs,
+			Files: baseFileSpecs,
 		})
 	}
 

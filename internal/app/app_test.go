@@ -173,7 +173,7 @@ func TestRunInit(t *testing.T) {
 		"path: .", // Now using relative path
 		".clinerules",
 		".roomodes",
-		".cursor/rules/rule1.mdc",
+		".cursor/rules/*.mdc",
 		"target_dirs: []", // Now empty target_dirs
 	}
 
