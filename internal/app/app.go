@@ -65,6 +65,15 @@ func (a *App) RunInit(dir string) error {
 		return fmt.Errorf("directory %s does not exist", dir)
 	}
 
+	// Check if configuration file already exists
+	configPath := config.DefaultConfigPath()
+	if _, err := os.Stat(configPath); err == nil {
+		fmt.Printf("Configuration file %s already exists. Skipping initialization.\n", configPath)
+		return nil
+	} else if !os.IsNotExist(err) {
+		return fmt.Errorf("failed to check if configuration file exists: %w", err)
+	}
+
 	fmt.Printf("Scanning directory for rule files...\n")
 
 	// Create a scanner
@@ -76,37 +85,42 @@ func (a *App) RunInit(dir string) error {
 		return fmt.Errorf("failed to scan directory: %w", err)
 	}
 
+	var cfg *config.Config
+
 	if len(ruleFiles) == 0 {
 		fmt.Println("No rule files found in the directory.")
-		return nil
-	}
-
-	fmt.Printf("Found %d potential rule files:\n", len(ruleFiles))
-	for _, file := range ruleFiles {
-		fmt.Printf("- %s\n", filepath.Join(dir, file))
-	}
-
-	// Find potential target directories
-	fmt.Println("\nDetecting potential target directories...")
-	targetDirs, err := s.FindPotentialTargetDirs(dir)
-	if err != nil {
-		return fmt.Errorf("failed to find potential target directories: %w", err)
-	}
-
-	if len(targetDirs) == 0 {
-		fmt.Println("No potential target directories found.")
-	} else {
-		fmt.Printf("Detected potential target directories:\n")
-		for _, targetDir := range targetDirs {
-			fmt.Printf("- %s\n", filepath.Join(dir, targetDir))
+		// Create a default empty configuration
+		cfg = &config.Config{
+			SourceDirs: []config.SourceDir{},
+			TargetDirs: []config.TargetDir{},
 		}
-	}
+	} else {
+		fmt.Printf("Found %d potential rule files:\n", len(ruleFiles))
+		for _, file := range ruleFiles {
+			fmt.Printf("- %s\n", filepath.Join(dir, file))
+		}
 
-	// Generate a configuration
-	cfg := a.generateConfig(dir, ruleFiles, targetDirs)
+		// Find potential target directories
+		fmt.Println("\nDetecting potential target directories...")
+		targetDirs, err := s.FindPotentialTargetDirs(dir)
+		if err != nil {
+			return fmt.Errorf("failed to find potential target directories: %w", err)
+		}
+
+		if len(targetDirs) == 0 {
+			fmt.Println("No potential target directories found.")
+		} else {
+			fmt.Printf("Detected potential target directories:\n")
+			for _, targetDir := range targetDirs {
+				fmt.Printf("- %s\n", filepath.Join(dir, targetDir))
+			}
+		}
+
+		// Generate a configuration
+		cfg = a.generateConfig(dir, ruleFiles, targetDirs)
+	}
 
 	// Save the configuration
-	configPath := config.DefaultConfigPath()
 	if err := config.SaveConfig(cfg, configPath); err != nil {
 		return fmt.Errorf("failed to save configuration: %w", err)
 	}
