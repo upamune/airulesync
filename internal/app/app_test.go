@@ -170,13 +170,11 @@ func TestRunInit(t *testing.T) {
 	// Verify that the configuration contains the expected content
 	expectedContent := []string{
 		"source_dirs:",
-		"path: " + projectDir,
+		"path: .", // Now using relative path
 		".clinerules",
 		".roomodes",
 		".cursor/rules/rule1.mdc",
-		"target_dirs:",
-		"path: " + subDirA,
-		"path: " + subDirB,
+		"target_dirs: []", // Now empty target_dirs
 	}
 
 	for _, expected := range expectedContent {

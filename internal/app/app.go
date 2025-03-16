@@ -146,22 +146,18 @@ func (a *App) generateConfig(baseDir string, ruleFiles, targetDirs []string) *co
 		}
 
 		sourceDirs = append(sourceDirs, config.SourceDir{
-			Path:  baseDir,
+			Path:  ".", // Use relative path instead of absolute path
 			Files: fileSpecs,
 		})
 	}
 
-	// Create target directories
+	// Create empty target directories slice
+	// This allows users to manually configure target directories as needed
 	var targetDirConfigs []config.TargetDir
-	for _, dir := range targetDirs {
-		targetDirConfigs = append(targetDirConfigs, config.TargetDir{
-			Path: filepath.Join(baseDir, dir),
-		})
-	}
 
 	return &config.Config{
 		SourceDirs: sourceDirs,
-		TargetDirs: targetDirConfigs,
+		TargetDirs: targetDirConfigs, // Empty slice
 	}
 }
 
